@@ -131,6 +131,14 @@ window.SOLEA_PRODUCTS = [
         return (0.299 * r + 0.587 * g + 0.114 * b) < 140;
     }
 
+    // Éclaircit (amount > 0) ou assombrit (amount < 0) une couleur hexadécimale
+    function shade(hex, amount) {
+        const h = hex.replace("#", "");
+        const ch = [0, 2, 4].map((i) => parseInt(h.substr(i, 2), 16));
+        const out = ch.map((v) => Math.round(amount >= 0 ? v + (255 - v) * amount : v * (1 + amount)));
+        return "#" + out.map((v) => v.toString(16).padStart(2, "0")).join("");
+    }
+
     function spfLabel(p) {
         if (!p.spf) return "APRÈS-SOLEIL";
         return "SPF " + p.spf + (p.spf >= 50 ? "+" : "");
@@ -243,11 +251,11 @@ window.SOLEA_PRODUCTS = [
                 <linearGradient id="${id}b" x1="0" x2="1">
                     <stop offset="0" stop-color="${c}"/>
                     <stop offset=".55" stop-color="${c}"/>
-                    <stop offset="1" stop-color="#000" stop-opacity=".12"/>
+                    <stop offset="1" stop-color="${shade(c, isDark(c) ? 0.18 : -0.16)}"/>
                 </linearGradient>
                 <linearGradient id="${id}a" x1="0" x2="1">
                     <stop offset="0" stop-color="${a}"/>
-                    <stop offset="1" stop-color="${a}" stop-opacity=".82"/>
+                    <stop offset="1" stop-color="${shade(a, -0.14)}"/>
                 </linearGradient>
             </defs>
             <rect width="400" height="500" fill="url(#${id}bg)"/>
